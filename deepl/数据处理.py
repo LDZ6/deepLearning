@@ -67,6 +67,9 @@ import torch
 
 
 
+
+
+
 #自动微分
 import torch
 #
@@ -102,3 +105,56 @@ import torch
 # # 这里我们传递一个全 1 的张量
 # y.backward(torch.ones_like(x))  # 计算偏导数的和
 # print("x.grad after y.sum().backward() with gradient:", x.grad)
+
+
+
+
+
+#概率论
+import torch
+from torch.distributions import multinomial
+from d2l import torch as d2l
+
+# fair_probs = torch.ones([6]) / 6
+# multinomial.Multinomial(1, fair_probs).sample()
+#
+# # 将结果存储为32位浮点数以进⾏除法
+# counts = multinomial.Multinomial(1000, fair_probs).sample()
+# print(counts / 1000)  # 相对频率作为估计值
+
+import torch
+from torch.distributions import multinomial
+import matplotlib.pyplot as plt
+
+# 定义一个公平的六面骰子的概率分布
+fair_probs = torch.ones(6) / 6
+
+# 抽取500组，每组投掷10次的样本
+counts = multinomial.Multinomial(10, fair_probs).sample((500,))
+
+# 计算累计次数
+cum_counts = counts.cumsum(dim=0)
+
+
+# 估计每个点的概率
+estimates = cum_counts / cum_counts.sum(dim=1, keepdim=True)
+
+# 设置图像大小
+plt.figure(figsize=(6, 4.5))
+
+# 绘制每个点的概率估计
+for i in range(6):
+    plt.plot(estimates[:, i].numpy(), label=f'P(die={i + 1})')
+
+# 绘制真实概率的水平线
+plt.axhline(y=1/6, color='black', linestyle='dashed')
+
+# 设置图表标签
+plt.xlabel('Groups of experiments')
+plt.ylabel('Estimated probability')
+
+# 显示图例
+plt.legend()
+
+# 展示图表
+plt.show()
