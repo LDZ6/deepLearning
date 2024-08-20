@@ -11,7 +11,7 @@ batch_size = 256
 num_inputs = 784
 num_outputs = 10
 lr = 0.01
-num_epochs = 10
+num_epochs = 100
 
 # 初始化模型参数
 W = torch.normal(0, 0.01, size=(num_inputs, num_outputs), requires_grad=True)
