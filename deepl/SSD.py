@@ -68,7 +68,6 @@ sizes = [[0.2, 0.272], [0.37, 0.447], [0.54, 0.619], [0.71, 0.79],
 ratios = [[1, 2, 0.5]] * 5
 num_anchors = len(sizes[0]) + len(ratios[0]) - 1
 
-
 class TinySSD(nn.Module):
     def __init__(self, num_classes, num_anchors=5, sizes=None, ratios=None, **kwargs):
         super(TinySSD, self).__init__(**kwargs)
@@ -111,7 +110,7 @@ class TinySSD(nn.Module):
 batch_size = 32
 train_iter, _ = d2l.load_data_bananas(batch_size)
 
-device, net = d2l.try_gpu(), TinySSD(num_classes=1)
+device, net = d2l.try_gpu(), TinySSD(num_classes=1, sizes=sizes, ratios=ratios)
 trainer = torch.optim.SGD(net.parameters(), lr=0.2, weight_decay=5e-4)
 
 cls_loss = nn.CrossEntropyLoss(reduction='none')
