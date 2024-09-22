@@ -15,14 +15,18 @@ def bbox_predictor(num_inputs, num_anchors):
 def forward(x, block):
     return block(x)
 
-# Y1 = forward(torch.zeros((2, 8, 20, 20)), cls_predictor(8, 5, 10))
-# Y2 = forward(torch.zeros((2, 16, 10, 10)), cls_predictor(16, 3, 10))
-# print(Y1.shape, Y2.shape)
+Y1 = forward(torch.zeros((2, 8, 20, 20)), cls_predictor(8, 5, 10))
+Y2 = forward(torch.zeros((2, 16, 10, 10)), cls_predictor(16, 3, 10))
+print(Y1.shape, Y2.shape)
 
 def flatten_pred(pred):
     return torch.flatten(pred.permute(0, 2, 3, 1), start_dim=1)
 def concat_preds(preds):
     return torch.cat([flatten_pred(p) for p in preds], dim=1)
+
+
+print(flatten_pred(Y1).shape)
+print(concat_preds([Y1, Y2]).shape)
 
 def down_sample_blk(in_channels, out_channels):
     blk = []
@@ -35,8 +39,7 @@ def down_sample_blk(in_channels, out_channels):
     blk.append(nn.MaxPool2d(2))
     return nn.Sequential(*blk)
 
-# print(forward(torch.zeros((2, 3, 20, 20)))
-# print(down_sample_blk(3, 10)).shape)
+print(forward(torch.zeros((2, 3, 20, 20)),down_sample_blk(3, 10)).shape)
 
 def base_net():
     blk = []
@@ -69,11 +72,9 @@ ratios = [[1, 2, 0.5]] * 5
 num_anchors = len(sizes[0]) + len(ratios[0]) - 1
 
 class TinySSD(nn.Module):
-    def __init__(self, num_classes, num_anchors=5, sizes=None, ratios=None, **kwargs):
+    def __init__(self, num_classes, **kwargs):
         super(TinySSD, self).__init__(**kwargs)
         self.num_classes = num_classes
-        self.sizes = sizes
-        self.ratios = ratios
         idx_to_in_channels = [64, 128, 128, 128, 128]
 
         for i in range(5):
@@ -87,7 +88,7 @@ class TinySSD(nn.Module):
         for i in range(5):
             # 动态访问 blk, cls 和 bbox
             X, anchors[i], cls_preds[i], bbox_preds[i] = blk_forward(
-                X, getattr(self, f'blk_{i}'), self.sizes[i], self.ratios[i],
+                X, getattr(self, f'blk_{i}'), sizes[i], ratios[i],
                 getattr(self, f'cls_{i}'), getattr(self, f'bbox_{i}')
             )
 
@@ -99,18 +100,18 @@ class TinySSD(nn.Module):
 
         return anchors, cls_preds, bbox_preds
 
-# net = TinySSD(num_classes=1)
-# X = torch.zeros((32, 3, 256, 256))
-# anchors, cls_preds, bbox_preds = net(X)
-# print('output anchors:', anchors.shape)
-# print('output class preds:', cls_preds.shape)
-# print('output bbox preds:', bbox_preds.shape)
+net = TinySSD(num_classes=1)
+X = torch.zeros((32, 3, 256, 256))
+anchors, cls_preds, bbox_preds = net(X)
+print('output anchors:', anchors.shape)
+print('output class preds:', cls_preds.shape)
+print('output bbox preds:', bbox_preds.shape)
 
 
 batch_size = 32
 train_iter, _ = d2l.load_data_bananas(batch_size)
 
-device, net = d2l.try_gpu(), TinySSD(num_classes=1, sizes=sizes, ratios=ratios)
+device, net = d2l.try_gpu(), TinySSD(num_classes=1)
 trainer = torch.optim.SGD(net.parameters(), lr=0.2, weight_decay=5e-4)
 
 cls_loss = nn.CrossEntropyLoss(reduction='none')
