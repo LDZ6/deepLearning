@@ -158,7 +158,82 @@ def seq_data_iter_random(corpus, batch_size, num_steps):  # @save
         Y = [data(j + 1) for j in initial_indices_per_batch]
         yield torch.tensor(X), torch.tensor(Y)
 
+import random
+import torch
+
+def seq_data_iter_sequential(corpus, batch_size, num_steps):
+    """使用顺序分区生成一个小批量子序列。
+
+    Args:
+        corpus (list or array): 输入的文本序列（通常是整数索引形式）。
+        batch_size (int): 每个小批量的样本数量。
+        num_steps (int): 每个序列的时间步长。
+
+    Yields:
+        tuple: 包含输入序列 (X) 和目标序列 (Y) 的小批量。
+    """
+    # 从随机偏移量开始划分序列
+    offset = random.randint(0, num_steps - 1)  # 确保偏移量小于 num_steps
+    num_tokens = ((len(corpus) - offset - 1) // batch_size) * batch_size
+
+    # 切分 corpus 为 Xs 和 Ys
+    Xs = torch.tensor(corpus[offset: offset + num_tokens])
+    Ys = torch.tensor(corpus[offset + 1: offset + 1 + num_tokens])
+
+    # 调整为 (batch_size, -1) 的形状
+    Xs, Ys = Xs.reshape(batch_size, -1), Ys.reshape(batch_size, -1)
+
+    # 计算每个批量中包含的时间步长
+    num_batches = Xs.shape[1] // num_steps
+
+    # 生成小批量
+    for i in range(0, num_steps * num_batches, num_steps):
+        X = Xs[:, i: i + num_steps]
+        Y = Ys[:, i: i + num_steps]
+        yield X, Y
+
 # 示例序列
 my_seq = list(range(35))
 for X, Y in seq_data_iter_random(my_seq, batch_size=2, num_steps=5):
     print('X: ', X, '\nY:', Y)
+
+class SeqDataLoader:  # @save
+    """加载序列数据的迭代器"""
+    def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
+        """
+        初始化数据加载器
+        参数：
+        batch_size: 每个小批量的大小
+        num_steps: 每次采样序列的长度
+        use_random_iter: 是否使用随机采样
+        max_tokens: 词汇表的最大长度
+        """
+        # 根据是否随机迭代，选择对应的数据采样函数
+        if use_random_iter:
+            self.data_iter_fn = seq_data_iter_random
+        else:
+            self.data_iter_fn = seq_data_iter_sequential
+
+        # 加载语料库和词汇表
+        self.corpus, self.vocab = load_corpus_time_machine(max_tokens)
+        self.batch_size, self.num_steps = batch_size, num_steps
+
+    def __iter__(self):
+        """返回数据迭代器"""
+        return self.data_iter_fn(self.corpus, self.batch_size, self.num_steps)
+
+
+def load_data_time_machine(batch_size, num_steps, use_random_iter=False, max_tokens=10000):  # @save
+    """
+    返回时光机器数据集的迭代器和词表
+    参数：
+    batch_size: 每个小批量的大小
+    num_steps: 每次采样序列的长度
+    use_random_iter: 是否使用随机采样
+    max_tokens: 词汇表的最大长度
+    返回：
+    data_iter: 数据迭代器
+    vocab: 词表
+    """
+    data_iter = SeqDataLoader(batch_size, num_steps, use_random_iter, max_tokens)
+    return data_iter, data_iter.vocab
