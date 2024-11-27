@@ -1,3 +1,5 @@
+import re
+
 import torch
 from torch.utils import data
 from torchvision import transforms
@@ -30,6 +32,18 @@ def softmax(X):
 # 定义交叉熵损失函数
 def cross_entropy(y_hat, y):
     return -torch.log(y_hat[range(len(y_hat)), y])
+# 定义数据集 URL 和哈希
+d2l.DATA_HUB['time_machine'] = (
+    d2l.DATA_URL + 'timemachine.txt',
+    '090b5e7e70c295757f55df93cb0a180b9691891a'
+)
+
+def read_time_machine(): #@save
+    """将时间机器数据集加载到文本行的列表中"""
+    with open(d2l.download('time_machine'), 'r') as f:
+        lines = f.readlines()
+    # 清理数据：去除非字母字符，转换为小写
+    return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
 
 # 定义分类精度计算
 def accuracy(y_hat, y):
