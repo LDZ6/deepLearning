@@ -5,13 +5,14 @@ import collections
 import re
 from d2l import torch as d2l
 import matplotlib.pyplot as plt
+import random
+import torch
 
 # 定义数据集 URL 和哈希
 d2l.DATA_HUB['time_machine'] = (
     d2l.DATA_URL + 'timemachine.txt',
     '090b5e7e70c295757f55df93cb0a180b9691891a'
 )
-
 
 # 读取《时间机器》文本并清理数据
 def read_time_machine():
@@ -20,7 +21,6 @@ def read_time_machine():
         lines = f.readlines()
     # 清理数据：去除非字母字符，转换为小写
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
-
 
 # 词元化函数：支持按单词或字符进行分词
 def tokenize(lines, token='word'):
@@ -32,7 +32,6 @@ def tokenize(lines, token='word'):
     else:
         print('错误：未知词元类型：' + token)
 
-
 # 统计词频
 def count_corpus(tokens):
     """统计词元的频率"""
@@ -40,7 +39,6 @@ def count_corpus(tokens):
     if len(tokens) == 0 or isinstance(tokens[0], list):
         tokens = [token for line in tokens for token in line]
     return collections.Counter(tokens)
-
 
 # 定义词表类
 class Vocab:
@@ -158,9 +156,6 @@ def seq_data_iter_random(corpus, batch_size, num_steps):  # @save
         Y = [data(j + 1) for j in initial_indices_per_batch]
         yield torch.tensor(X), torch.tensor(Y)
 
-import random
-import torch
-
 def seq_data_iter_sequential(corpus, batch_size, num_steps):
     """使用顺序分区生成一个小批量子序列。
 
@@ -192,10 +187,21 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):
         Y = Ys[:, i: i + num_steps]
         yield X, Y
 
-# 示例序列
-my_seq = list(range(35))
-for X, Y in seq_data_iter_random(my_seq, batch_size=2, num_steps=5):
-    print('X: ', X, '\nY:', Y)
+def load_data_time_machine(batch_size, num_steps, use_random_iter=False, max_tokens=10000):  # @save
+    """
+    返回时光机器数据集的迭代器和词表
+    参数：
+    batch_size: 每个小批量的大小
+    num_steps: 每次采样序列的长度
+    use_random_iter: 是否使用随机采样
+    max_tokens: 词汇表的最大长度
+    返回：
+    data_iter: 数据迭代器
+    vocab: 词表
+    """
+    data_iter = SeqDataLoader(batch_size, num_steps, use_random_iter, max_tokens)
+    return data_iter, data_iter.vocab
+
 
 class SeqDataLoader:  # @save
     """加载序列数据的迭代器"""
@@ -223,17 +229,10 @@ class SeqDataLoader:  # @save
         return self.data_iter_fn(self.corpus, self.batch_size, self.num_steps)
 
 
-def load_data_time_machine(batch_size, num_steps, use_random_iter=False, max_tokens=10000):  # @save
-    """
-    返回时光机器数据集的迭代器和词表
-    参数：
-    batch_size: 每个小批量的大小
-    num_steps: 每次采样序列的长度
-    use_random_iter: 是否使用随机采样
-    max_tokens: 词汇表的最大长度
-    返回：
-    data_iter: 数据迭代器
-    vocab: 词表
-    """
-    data_iter = SeqDataLoader(batch_size, num_steps, use_random_iter, max_tokens)
-    return data_iter, data_iter.vocab
+
+# 示例序列
+my_seq = list(range(35))
+for X, Y in seq_data_iter_sequential(my_seq, batch_size=2, num_steps=5):
+    print('X: ', X, '\nY:', Y)
+
+
