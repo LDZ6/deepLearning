@@ -1,18 +1,34 @@
 import re
+import math
+import torch
+from matplotlib import pyplot as plt
+from torch import nn
+from d2l import torch as d2l
 import random
 import torch
-from d2l import torch as d2l
 import collections
 import re
-from d2l import torch as d2l
 import matplotlib.pyplot as plt
 import torch
+from torch.nn import functional as F
 from torch.utils import data
 from torchvision import transforms
 from torchvision import datasets
-from torch import nn
-import matplotlib.pyplot as plt
-from d2l import torch as d2l
+import hashlib
+import os
+import tarfile
+import zipfile
+import requests
+
+# 定义数据集 URL 和哈希
+d2l.DATA_HUB['time_machine'] = (
+    d2l.DATA_URL + 'timemachine.txt',
+    '090b5e7e70c295757f55df93cb0a180b9691891a'
+)
+# 数据中心，用于存储数据集的下载链接和对应的sha-1哈希值
+DATA_HUB = dict()
+DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
+
 def load_data_fashion_mnist(batch_size, resize=None):
     trans = [transforms.ToTensor()]
     if resize:
@@ -33,16 +49,9 @@ def softmax(X):
     partition = X_exp.sum(1, keepdim=True)
     return X_exp / partition
 
-# 定义模型
-
 # 定义交叉熵损失函数
 def cross_entropy(y_hat, y):
     return -torch.log(y_hat[range(len(y_hat)), y])
-# 定义数据集 URL 和哈希
-d2l.DATA_HUB['time_machine'] = (
-    d2l.DATA_URL + 'timemachine.txt',
-    '090b5e7e70c295757f55df93cb0a180b9691891a'
-)
 
 def read_time_machine(): #@save
     """将时间机器数据集加载到文本行的列表中"""
@@ -83,7 +92,6 @@ class Accumulator:
 
     def __getitem__(self, idx):
         return self.data[idx]
-
 
 class Animator:
     """在动画中绘制数据"""
@@ -133,7 +141,6 @@ class Animator:
             self.axes[0].plot(x_data, y_data, fmt)
         self.config_axes()
 
-
 # 训练模型一个迭代周期
 def train_epoch_ch3(net, train_iter, loss, updater):
     """训练模型一个迭代周期（定义见第3章）"""
@@ -166,8 +173,6 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
         print(f'Epoch {epoch + 1}, Train Loss: {train_loss}, Train Accuracy: {train_acc}, Test Accuracy: {test_acc}')
     plt.show()
 
-
-
 def predict_ch3(net, test_iter, n=6):
     """预测标签（定义见第3章）"""
     # 获取第一个批次的图像和标签
@@ -189,16 +194,6 @@ def predict_ch3(net, test_iter, n=6):
     )
     plt.tight_layout()
     plt.show()  # 在 PyCharm 中显示图像
-
-import hashlib
-import os
-import tarfile
-import zipfile
-import requests
-
-# 数据中心，用于存储数据集的下载链接和对应的sha-1哈希值
-DATA_HUB = dict()
-DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
 def download(name, cache_dir=os.path.join('..', 'data')):
     """下载一个DATA_HUB中的文件，返回本地文件名"""
@@ -226,7 +221,6 @@ def download(name, cache_dir=os.path.join('..', 'data')):
         f.write(r.content)
     return fname
 
-
 def download_extract(name, folder=None):
     """下载并解压zip/tar文件"""
     fname = download(name)
@@ -242,7 +236,6 @@ def download_extract(name, folder=None):
 
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
-
 
 def download_all():
     """下载DATA_HUB中的所有文件"""
@@ -287,7 +280,6 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec on {str(device)}')
     plt.show()
 
-
 def evaluate_accuracy_gpu(net, data_iter, device=None):
     if isinstance(net, nn.Module):
         net.eval()
@@ -304,12 +296,6 @@ def evaluate_accuracy_gpu(net, data_iter, device=None):
             metric.add(d2l.accuracy(net(X), y), y.numel())
     return metric[0] / metric[1]
 
-# 定义数据集 URL 和哈希
-d2l.DATA_HUB['time_machine'] = (
-    d2l.DATA_URL + 'timemachine.txt',
-    '090b5e7e70c295757f55df93cb0a180b9691891a'
-)
-
 # 读取《时间机器》文本并清理数据
 def read_time_machine():
     """将时间机器数据集加载到文本行的列表中"""
@@ -317,7 +303,6 @@ def read_time_machine():
         lines = f.readlines()
     # 清理数据：去除非字母字符，转换为小写
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
-
 
 # 词元化函数：支持按单词或字符进行分词
 def tokenize(lines, token='word'):
@@ -384,7 +369,6 @@ class Vocab:
     def token_freqs(self):
         """返回词元频率"""
         return self._token_freqs
-
 
 # 加载和处理《时间机器》数据集
 def load_corpus_time_machine(max_tokens=-1):
@@ -556,8 +540,6 @@ class RNNModel(nn.Module):
                     torch.zeros((self.num_directions * self.rnn.num_layers,
                                  batch_size, self.num_hiddens), device=device))
 
-
-
 def get_params(vocab_size, num_hiddens, device):
     """
     初始化 RNN 的参数。
@@ -620,7 +602,6 @@ def rnn(inputs, state, params):
 
     # 将所有时间步的输出连接成一个大张量
     return torch.cat(outputs, dim=0), (H,)
-
 
 class RNNModelScratch:
     """从零开始实现的循环神经网络模型"""
