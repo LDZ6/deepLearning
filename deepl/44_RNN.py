@@ -277,16 +277,14 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device, use_random_iter=Fa
         # 每10个epoch打印一次预测结果
         if (epoch + 1) % 10 == 0:
             print(predict('time traveller'))
+            # 更新动画图
+            animator.add(epoch + 1, [ppl])
 
-        # 更新动画图
-        animator.add(epoch + 1, [ppl])
-
-        # 打印困惑度和每秒处理的词元数量
-        print(f'困惑度 {ppl:.1f}, {speed:.1f} 词元/秒 {str(device)}')
-
-        # 打印模型的预测
-        print(predict('time traveller'))
-        print(predict('traveller'))
+    # 打印困惑度和每秒处理的词元数量
+    print(f'困惑度 {ppl:.1f}, {speed:.1f} 词元/秒 {str(device)}')
+    # 打印模型的预测
+    print(predict('time traveller'))
+    print(predict('traveller'))
 
 
 # 设置批处理大小和序列长度

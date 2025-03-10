@@ -23,20 +23,16 @@ print(raw_text[:75])
 # 预处理“英语－法语”数据集
 def preprocess_nmt(text):
     """预处理“英语－法语”数据集"""
-
     # 判断是否是标点符号且前一个字符不是空格
     def no_space(char, prev_char):
         return char in set(',.!?') and prev_char != ' '
-
     # 使用空格替换不间断空格和其他特殊空格字符，转换为小写字母
     text = text.replace('\u202f', ' ').replace('\xa0', ' ').lower()
-
     # 在单词和标点符号之间插入空格
     out = [
         ' ' + char if i > 0 and no_space(char, text[i - 1]) else char
         for i, char in enumerate(text)
     ]
-
     return ''.join(out)
 
 # 预处理原始数据并打印处理后的前80个字符

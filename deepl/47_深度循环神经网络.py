@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from d2l import torch as d2l
 
-from deepl.RNN import RNNModel
+from utils import RNNModel
 from deepl.utils import load_data_time_machine, train_ch8
 
 batch_size, num_steps = 32, 35

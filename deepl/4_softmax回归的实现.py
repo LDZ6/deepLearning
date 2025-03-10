@@ -131,7 +131,6 @@ class Animator:
 
 # 训练模型一个迭代周期
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """训练模型一个迭代周期（定义见第3章）"""
     if isinstance(net, nn.Module):
         net.train()
     metric = Accumulator(3)
@@ -190,8 +189,6 @@ def predict_ch3(net, test_iter, n=6):
 
 # 下载数据并加载到内存中
 train_iter, test_iter = load_data_fashion_mnist(batch_size)
-
 # 训练模型
 train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
-
 predict_ch3(net, test_iter)

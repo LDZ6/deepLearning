@@ -61,7 +61,6 @@ print("嵌套网络的结构:", rgnet)
 print("嵌套块中第一个主要块的第二个子块的第一个层的偏置项:", rgnet[0][1][0].bias.data)
 
 # 5.2.2 参数初始化
-
 # 使用自定义初始化方法初始化模型参数
 def init_normal(m):
     if type(m) == nn.Linear:

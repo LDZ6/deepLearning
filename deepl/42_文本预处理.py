@@ -18,7 +18,6 @@ def read_time_machine():
     # 清理数据：去除非字母字符，转换为小写
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
 
-
 # 词元化函数：支持按单词或字符进行分词
 def tokenize(lines, token='word'):
     """将文本行拆分为单词或字符词元"""

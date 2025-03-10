@@ -37,7 +37,6 @@ def get_lstm_params(vocab_size, num_hiddens, device):
     # 设置梯度计算
     for param in params:
         param.requires_grad_(True)
-
     return params
 
 def init_lstm_state(batch_size, num_hiddens, device):

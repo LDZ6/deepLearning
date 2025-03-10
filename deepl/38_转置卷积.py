@@ -2,7 +2,6 @@ import torch
 from torch import nn
 from d2l import torch as d2l
 
-# 13.10.1 基本操作
 def trans_conv(X, K):
     h, w = K.shape
     Y = torch.zeros((X.shape[0] + h - 1, X.shape[1] + w - 1))
@@ -41,7 +40,6 @@ result_stride = tconv(X)
 print("步幅为2的转置卷积结果：")
 print(result_stride)
 
-# 13.10.3 与矩阵变换的联系
 X = torch.arange(9.0).reshape(3, 3)
 K = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
 Y = d2l.corr2d(X, K)
