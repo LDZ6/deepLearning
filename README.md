@@ -1,57 +1,57 @@
-# PyTorch 深度学习笔记
+# PyTorch Deep Learning Notes
 
-本项目旨在系统整理与记录我在使用 PyTorch 进行深度学习研究和实践过程中的经验与思考。基于李沐老师的《动手学深度学习》课程内容，我逐步实现并验证了课程中涉及的各类模型与算法，从基础模型到前沿技术，均有详细的代码实现与说明。
-
----
-
-## 项目背景
-
-在不断探索深度学习的过程中，我逐步体会到理论与实践的相互印证尤为重要。为此，我整理了从数据处理、模型构建到训练与评估的全流程实践案例，涵盖经典模型（如线性回归、多层感知机、卷积神经网络）以及序列模型（如 RNN、GRU、LSTM、双向 RNN）和最新的 Transformer、BERT 模型等。
-
-此外，考虑到 d2l 库版本更新可能带来的不兼容问题，我独立实现了大量工具函数，统一整理在 `utils.py` 文件中。这部分工具函数不仅提高了代码的稳定性和复用性，也有助于深入理解底层实现细节。
+This project aims to systematically organize and document my experiences and insights gained during deep learning research and practice using PyTorch. Based on Professor Li Mu's "Dive into Deep Learning" course, I have progressively implemented and validated various models and algorithms covered in the course, from fundamental models to cutting-edge technologies, all with detailed code implementations and explanations.
 
 ---
 
-## 目录结构
+## Project Background
 
-- **基础模块**
-  - 激活函数实现
-  - 数据预处理与数据集构建
+Throughout my continuous exploration of deep learning, I have gradually realized the crucial importance of the mutual validation between theory and practice. To this end, I have organized full-pipeline practical cases covering data processing, model construction, training, and evaluation, including classic models (such as linear regression, multilayer perceptrons, convolutional neural networks), sequence models (such as RNN, GRU, LSTM, bidirectional RNN), and the latest Transformer and BERT models.
 
-- **传统模型**
-  - 线性回归（基础与进阶实现）
-  - 多层感知机（MLP）
-  - 卷积神经网络（CNN）及相关正则化技术
-
-- **序列模型**
-  - 基础 RNN
-  - GRU 与 LSTM
-  - 深层 RNN 与双向 RNN
-
-- **高级模型**
-  - 机器翻译及数据集构建
-  - 编码器-解码器与 Seq2Seq 模型
-  - 注意力机制（包括 Bahdanau 注意力、多头注意力、自注意力与位置编码）
-  - Transformer 与 BERT 预训练及数据集构建
-
-- **工具函数**
-  - `utils.py`：为解决 d2l 库版本更新带来的问题，我自主实现了一系列工具函数，并将其整合于此，确保项目在不同环境下均能平稳运行。
-
-- **实验与应用**
-  - 预测房价案例
-  - 其他实用案例
+Furthermore, considering potential incompatibility issues arising from d2l library version updates, I have independently implemented numerous utility functions, all consolidated in the `utils.py` file. These utility functions not only improve code stability and reusability but also facilitate a deeper understanding of underlying implementation details.
 
 ---
 
-## 运行环境
+## Directory Structure
 
-- **开发工具**：PyCharm
-- **Python**：3.8+
-- **PyTorch**：2.0.0+cu117
+- **Fundamental Modules**
+  - Activation function implementations
+  - Data preprocessing and dataset construction
 
-### 安装 PyTorch
+- **Traditional Models**
+  - Linear regression (basic and advanced implementations)
+  - Multilayer perceptron (MLP)
+  - Convolutional neural networks (CNN) and related regularization techniques
 
-请使用如下命令安装 PyTorch 及相关包：
+- **Sequence Models**
+  - Basic RNN
+  - GRU and LSTM
+  - Deep RNN and bidirectional RNN
+
+- **Advanced Models**
+  - Machine translation and dataset construction
+  - Encoder-decoder and Seq2Seq models
+  - Attention mechanisms (including Bahdanau attention, multi-head attention, self-attention, and positional encoding)
+  - Transformer and BERT pretraining and dataset construction
+
+- **Utility Functions**
+  - `utils.py`: To address issues arising from d2l library version updates, I have independently implemented a series of utility functions and integrated them here to ensure the project runs smoothly across different environments.
+
+- **Experiments and Applications**
+  - House price prediction case study
+  - Other practical cases
+
+---
+
+## Runtime Environment
+
+- **Development Tool**: PyCharm
+- **Python**: 3.8+
+- **PyTorch**: 2.0.0+cu117
+
+### Installing PyTorch
+
+Please use the following command to install PyTorch and related packages:
 
 ```bash
 pip install torch==2.0.0+cu117 torchvision==0.15.0+cu117 torchaudio==2.0.0+cu117 -f https://download.pytorch.org/whl/torch_stable.html --timeout 1000
@@ -59,22 +59,22 @@ pip install torch==2.0.0+cu117 torchvision==0.15.0+cu117 torchaudio==2.0.0+cu117
 
 ---
 
-## 使用说明
+## Usage Instructions
 
-项目中的每个脚本均为独立模块，建议按顺序阅读与实验，从基础内容入手，逐步深入到高级模型与应用。各模块均附有详细的注释和说明，以便理解每一步实现的原理与细节。
-
----
-
-## 致谢
-
-感谢李沐老师及《动手学深度学习》课程提供的系统理论和实践指导，正是这些资源激发了我对深度学习的浓厚兴趣和不断探索的动力。同时，感谢开源社区中众多贡献者分享的经验与代码，让我在学习过程中受益匪浅。
+Each script in the project is an independent module. It is recommended to read and experiment in sequence, starting with the foundational content and gradually advancing to advanced models and applications. Each module includes detailed comments and explanations to facilitate understanding of the principles and details of each implementation step.
 
 ---
 
-## 贡献与许可证
+## Acknowledgments
 
-欢迎对本项目提出建议或进行改进。项目目前遵循 MIT 许可证，欢迎任何形式的交流与反馈。
+I am grateful to Professor Li Mu and the "Dive into Deep Learning" course for providing systematic theoretical and practical guidance, which has inspired my strong interest in deep learning and motivated my continuous exploration. I also thank the numerous contributors in the open-source community for sharing their experiences and code, from which I have greatly benefited throughout my learning journey.
 
 ---
 
-本项目不仅是个人学习过程的总结，也是对深度学习研究方法的一次深入实践，希望对同行有所裨益。
+## Contributions and License
+
+Suggestions and improvements to this project are welcome. The project currently follows the MIT License, and any form of communication and feedback is appreciated.
+
+---
+
+This project is not only a summary of my personal learning journey but also an in-depth practice of deep learning research methodologies. I hope it will be beneficial to fellow practitioners.
